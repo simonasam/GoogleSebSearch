@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="ee1da3b9-ec96-4c9c-9d2e-ff3ff550fc73" activeEnvironment="Default" name="GoogleServiceCheck" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  <con:entry key="Environment" value="Default"/>
+  <con:entry key="Global Properties" value=""/>
+  <con:entry key="TestSuite" value="CheckSebInput"/>
+  <con:entry key="Password" value=""/>
+  <con:entry key="TestRunner Path" value=""/>
+  <con:entry key="Tool Args" value=""/>
+  <con:entry key="Ignore Errors" value="false"/>
+  <con:entry key="Host:Port" value=""/>
+  <con:entry key="user-settings.xml Password" value=""/>
+  <con:entry key="WSS Password Type" value=""/>
+  <con:entry key="Save Project" value="false"/>
+  <con:entry key="Enable UI" value="false"/>
+  <con:entry key="System Properties" value=""/>
+  <con:entry key="Domain" value=""/>
+  <con:entry key="Coverage Report" value="false"/>
+  <con:entry key="Export JUnit Results" value="false"/>
+  <con:entry key="Export JUnit Results with test properties" value="false"/>
+  <con:entry key="Open Report" value="false"/>
+  <con:entry key="Project Properties" value=""/>
+  <con:entry key="Export All" value="false"/>
+  <con:entry key="Project Password" value=""/>
+  <con:entry key="Report Format(s)" value=""/>
+  <con:entry key="TestCase" value="GoogleSearchTestCase"/>
+  <con:entry key="Print Report" value="false"/>
+  <con:entry key="Username" value=""/>
+  <con:entry key="Root Folder" value=""/>
+  <con:entry key="Select Report Type" value=""/>
+  <con:entry key="Save After" value="false"/>
+  <con:entry key="Add Settings" value="false"/>
+  <con:entry key="Endpoint" value=""/>
+</xml-fragment>]]></con:setting></con:settings><con:interface xsi:type="con:RestService" id="9e120714-99b9-4506-aa76-a63e92186501" wadlVersion="http://wadl.dev.java.net/2009/02" name="https://www.google.se" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>https://www.google.se</con:endpoint></con:endpoints><con:resource name="Search" path="/search" id="3411bda6-4bb9-4556-a79c-a209cff6670e"><con:settings/><con:parameters><con:parameter><con:name>q</con:name><con:value>seb</con:value><con:style>QUERY</con:style><con:default>seb</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="Search" id="04f08166-4f9d-4e64-ac3e-0578dd1679fa" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>text/html; charset=ISO-8859-1</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:request name="SearchRequest" id="a0b68b3c-15f7-4ff4-98c0-18f1d18130ee" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://www.google.se</con:endpoint><con:request/><con:originalUri>https://www.google.se/search</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>q</con:entry></con:parameterOrder></con:request></con:method></con:resource></con:interface><con:testSuite id="1b13777d-664a-43c5-b10b-e4f0f150ec87" name="CheckSebInput"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="689d0ae1-772c-43d5-8502-d5d10ab7d59b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="GoogleSearchTestCase" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="SearchSeb" id="07c70a6a-5ef5-4150-a654-70a5932ded26"><con:settings/><con:config service="https://www.google.se" resourcePath="/search" methodName="Search" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="SearchSeb" id="a0b68b3c-15f7-4ff4-98c0-18f1d18130ee" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://www.google.se</con:endpoint><con:request/><con:originalUri>https://www.google.se/search</con:originalUri><con:assertion type="GroovyScriptAssertion" id="b5ae363d-4050-4c85-9b7c-942e65f39a24" name="Script Assertion"><con:configuration><scriptText>import com.eviware.soapui.support.XmlHolder
+import groovy.util.XmlParser
+import groovy.util.XmlSlurper
+
+def response = messageExchange.getResponseContentAsXml()
+def list = new XmlSlurper().parseText(response)
+log.info list
+
+def link = list.depthFirst().findAll { it.name() == 'div' &amp;&amp; it.@id == 'ires'}
+	.collect { d -> d.'**'.find { it.name() == 'a' }?.@href }.findAll()
+log.info link
+assert link.toString().contains("http://seb.se/")
+</scriptText></con:configuration></con:assertion><con:assertion type="Valid HTTP Status Codes" id="4a3c4778-a8bf-4fde-b7b2-3445c45c7d9f" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>q</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
